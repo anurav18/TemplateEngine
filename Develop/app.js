@@ -9,10 +9,16 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const Engineer = require("./lib/Engineer");
+const Manager = require("./lib/Manager");
+const Intern = require("./lib/Intern");
 
 
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
+//array containing employee objects
+
+const employees = [];
+
+
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
@@ -24,12 +30,97 @@ const render = require("./lib/htmlRenderer");
 // Hint: you may need to check if the `output` folder exists and create it if it
 // does not.
 
-// HINT: each employee type (manager, engineer, or intern) has slightly different
-// information; write your code to ask different questions via inquirer depending on
-// employee type.
+//Questions based on the Role, each declared in an array
 
-// HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
-// and Intern classes should all extend from a class named Employee; see the directions
-// for further information. Be sure to test out each class and verify it generates an
-// object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work! ```
+const managerQ = [
+{
+    type: "input",
+    message: "Enter the name of the Manager",
+    name: "name"
+
+},
+{
+    type: "input",
+    message: "Enter the id of the Manager",
+    name: "id"
+
+},
+{
+    type: "input",
+    message: "Enter the email Id of the Manager",
+    name: "emailId"
+
+},
+{
+    type: "input",
+    message: "Enter Manager's Office Number",
+    name: "number"
+
+}
+];
+
+const teammemberType = {
+    type: "list",
+    message: "Which type of team member would you like to add?",
+    name: "membertype",
+    choices: [
+        "Engineer",
+        "Intern",
+        "I don't want to add any more team members"
+    ]
+};
+
+const EngineerQ = [
+    {
+        type: "input",
+        message: "Enter the name of the Engineer",
+        name: "name"
+    
+    },
+    {
+        type: "input",
+        message: "Enter the id of the Engineer",
+        name: "id"
+    
+    },
+    {
+        type: "input",
+        message: "Enter the email Id of the Engineer",
+        name: "emailId"
+    
+    },
+    {
+        type: "input",
+        message: "Enter Engineer's gitHub userName",
+        name: "gitHubId"
+
+    }
+
+];
+
+const InternQ =[
+    {
+        type: "input",
+        message: "Enter the name of the Intern",
+        name: "name"
+    
+    },
+    {
+        type: "input",
+        message: "Enter the id of the Intern",
+        name: "id"
+    
+    },
+    {
+        type: "input",
+        message: "Enter the email Id of the Intern",
+        name: "emailId"
+    
+    },
+    {
+        type: "input",
+        message: "Enter Intern's School Name",
+        name: "schoolName"
+
+    }
+];
