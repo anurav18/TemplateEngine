@@ -9,34 +9,63 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
-const Engineer = require("./lib/Engineer");
-const Manager = require("./lib/Manager");
-const Intern = require("./lib/Intern");
 
+//Create Validation rules for user Inputs
+
+const validateName = function(name){
+  if(name === ""){
+      console.log("\n Enter a Name");
+      return false;
+  }
+  return true;
+}
+
+const validateEmail = function(emailId){
+    const validString = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(emailId.toLowerCase());
+    if(!validString || emailId === "")
+    {
+        console.log("\n enter a valid email");
+        return false;
+    }
+    return true;
+
+}
+
+const validategitHub = function(gitHubId){
+    if(gitHubId === ""){
+        console.log("\n Enter your github id");
+        return false;
+    }
+    return true;
+}
+
+const validateSchool = function(schoolName){
+    if(schoolName === ""){
+        console.log("\n Enter a SchoolName");
+        return false;
+    }
+    return true;
+}
+
+const validateOfficeNumber = function(officeNumber){
+    if(officeNumber === ""){
+        console.log("\n Enter a SchoolName");
+        return false;
+    }
+    return true;
+}
 
 //array containing employee objects
 
 const employees = [];
 
 
-
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
-
-// After you have your html, you're now ready to create an HTML file using the HTML
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
-
-//Questions based on the Role, each declared in an array
-
 const managerQ = [
 {
     type: "input",
     message: "Enter the name of the Manager",
-    name: "name"
+    name: "name",
+    validate: validateName
 
 },
 {
@@ -48,13 +77,15 @@ const managerQ = [
 {
     type: "input",
     message: "Enter the email Id of the Manager",
-    name: "emailId"
+    name: "emailId",
+    validate: validateEmail
 
 },
 {
     type: "input",
     message: "Enter Manager's Office Number",
-    name: "number"
+    name: "officeNumber",
+    validate: validateOfficeNumber
 
 }
 ];
@@ -74,7 +105,8 @@ const EngineerQ = [
     {
         type: "input",
         message: "Enter the name of the Engineer",
-        name: "name"
+        name: "name",
+        validate: validateName
     
     },
     {
@@ -86,13 +118,15 @@ const EngineerQ = [
     {
         type: "input",
         message: "Enter the email Id of the Engineer",
-        name: "emailId"
+        name: "emailId",
+        validate: validateEmail
     
     },
     {
         type: "input",
         message: "Enter Engineer's gitHub userName",
-        name: "gitHubId"
+        name: "gitHubId",
+        validate: validategitHub
 
     }
 
@@ -102,7 +136,8 @@ const InternQ =[
     {
         type: "input",
         message: "Enter the name of the Intern",
-        name: "name"
+        name: "name",
+        validate: validateName
     
     },
     {
@@ -114,13 +149,75 @@ const InternQ =[
     {
         type: "input",
         message: "Enter the email Id of the Intern",
-        name: "emailId"
+        name: "emailId",
+        validate: validateEmail
     
     },
     {
         type: "input",
         message: "Enter Intern's School Name",
-        name: "schoolName"
+        name: "schoolName",
+        validate: validateSchool
 
     }
 ];
+
+//Prompt with Manager's questions
+function ManagerQue(){
+inquirer.prompt(managerQ).then(response => {
+const Managerdetails = new Manager(response.name,response.id,response.emailId, response.officeNumber);
+employees.push(Managerdetails);
+chooseEmployeeType();
+})
+}
+
+function chooseEmployeeType(){
+    inquirer.prompt(teammemberType).then(response => {
+        switch(response.membertype)
+        {
+            case "Engineer":
+                inquirer.prompt(EngineerQ).then(response => {
+                    const engineerDetails = new Engineer(response.name,response.id,response.emailId,response.gitHubId);
+                    employees.push(engineerDetails);
+                    chooseEmployeeType();
+
+                })
+                break;
+
+            case "Intern":
+                    inquirer.prompt(InternQ).then(response => {
+                        const internDetails = new Intern(response.name,response.id,response.emailId,response.schoolName);
+                    employees.push(internDetails);
+                    chooseEmployeeType();
+    
+                })
+                break;
+                
+            case "I don't want to add any more team members":
+                fs.access(OUTPUT_DIR, err => {
+                    if (err) {
+                        fs.mkdirSync(OUTPUT_DIR, (err) => {
+                            if (err) throw err;    
+                        });
+                        writeHtml();
+                    } else {
+                        writeHtml();
+                    }
+                });        
+                
+
+        }
+    })
+};
+
+//Write to HTML file
+
+function writeHtml() {
+    const renderhtml = render(employees);
+    fs.writeFile(outputPath, renderhtml, (err) => {
+        if (err) throw err;
+        }); 
+}
+
+ManagerQue();
+
