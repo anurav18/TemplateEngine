@@ -199,9 +199,9 @@ function chooseEmployeeType(){
                         fs.mkdirSync(OUTPUT_DIR, (err) => {
                             if (err) throw err;    
                         });
-                        writeHtml();
+                        Createfile();
                     } else {
-                        writeHtml();
+                        Createfile();
                     }
                 });        
                 
@@ -212,7 +212,7 @@ function chooseEmployeeType(){
 
 //Write to HTML file
 
-function writeHtml() {
+function Createfile() {
     const renderhtml = render(employees);
     fs.writeFile(outputPath, renderhtml, (err) => {
         if (err) throw err;
